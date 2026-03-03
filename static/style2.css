@@ -1,0 +1,243 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#f4f6f9;
+  min-height:100vh;
+}
+
+.container{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+background:#1e293b;
+color:white;
+min-height:100vh;
+padding:20px;
+}
+
+.sidebar h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.sidebar ul{
+list-style:none;
+}
+
+.sidebar ul li{
+padding:12px;
+cursor:pointer;
+border-radius:6px;
+margin-bottom:8px;
+transition:0.3s;
+}
+
+.sidebar ul li:hover{
+background:#334155;
+}
+
+/* MAIN CONTENT */
+.main{
+flex:1;
+padding:20px;
+}
+
+/* HEADER */
+.header{
+background:white;
+padding:15px;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* BUTTON */
+button{
+padding:8px 14px;
+border:none;
+background:#2563eb;
+color:white;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+margin:4px 4px 4px 0;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+/* CARD */
+.card{
+background:white;
+padding:20px;
+margin-top:20px;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,0.08);
+}
+
+.sub-card{
+margin-top:20px;
+padding:15px;
+background:#f8fafc;
+border-radius:8px;
+}
+
+.hidden{
+display:none;
+}
+
+/* INPUT */
+input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:14px;
+}
+
+/* WARNING TEXT */
+.warning{
+color:red;
+font-size:13px;
+min-height:16px;
+}
+
+/* CHAT BOX */
+.chat-box{
+margin-top:10px;
+background:#f1f5f9;
+padding:10px;
+border-radius:6px;
+min-height:60px;
+}
+
+/* ================= LOGIN MODAL ================= */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.modal-content{
+background:white;
+padding:25px;
+border-radius:12px;
+width:360px;
+position:relative;
+box-shadow:0 8px 25px rgba(0,0,0,0.2);
+animation:popupFade 0.3s ease;
+}
+
+.close-btn{
+position:absolute;
+right:15px;
+top:10px;
+font-size:22px;
+cursor:pointer;
+color:#555;
+}
+
+.close-btn:hover{
+color:red;
+}
+
+.forget-link{
+margin-top:10px;
+font-size:13px;
+color:#2563eb;
+cursor:pointer;
+text-align:center;
+}
+
+.forget-link:hover{
+text-decoration:underline;
+}
+
+/* Smooth Animation */
+@keyframes popupFade{
+from{
+opacity:0;
+transform:scale(0.9);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1024px){
+.sidebar{
+width:200px;
+}
+}
+
+@media(max-width:768px){
+
+body{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+min-height:auto;
+padding:15px;
+}
+
+.sidebar ul{
+display:flex;
+flex-wrap:wrap;
+gap:6px;
+}
+
+.sidebar ul li{
+flex:1 1 45%;
+text-align:center;
+font-size:13px;
+padding:10px;
+}
+
+.main{
+padding:15px;
+}
+
+.header{
+flex-direction:column;
+gap:10px;
+text-align:center;
+}
+
+button{
+width:100%;
+}
+
+.popup-content{
+width:90%;
+}
+}
+
+.modal.hidden {
+  display: none !important;
+}

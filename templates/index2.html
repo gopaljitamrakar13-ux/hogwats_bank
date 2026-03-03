@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hogwarts Bank Management System</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style2.css') }}"
+    />
+  </head>
+
+  <body>
+    <!-- FLEX CONTAINER -->
+    <div class="container">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <h2>🏦 Hogwarts Bank</h2>
+        <ul>
+          <li onclick="showSection('dashboard')">Dashboard</li>
+          <li onclick="showSection('create')">Create Account</li>
+          <li onclick="showSection('balance')">Balance Check</li>
+          <li onclick="showSection('transfer')">Money Transfer</li>
+          <li onclick="showSection('transactions')">Transaction History</li>
+          <li onclick="showSection('profile')">Profile Update</li>
+          <li onclick="showSection('chatbot')">Need Help?</li>
+        </ul>
+      </div>
+
+      <!-- MAIN CONTENT -->
+      <div class="main">
+        <div class="header">
+          <h3>Hogwarts Bank Management System</h3>
+
+          <button onclick="handleLoginButton()" id="loginBtn">Login</button>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="card">
+          <h3>Dashboard</h3>
+
+          <div class="sub-card">
+            <h4>Loan EMI Calculator</h4>
+            <input type="number" id="principal" placeholder="Loan Amount" />
+            <input type="number" id="rate" placeholder="Interest Rate (%)" />
+            <input type="number" id="time" placeholder="Time (Years)" />
+            <button onclick="calculateEMI()">Calculate EMI</button>
+            <p id="emiResult"></p>
+          </div>
+
+          <div class="sub-card">
+            <h4>Apply for Loan</h4>
+            <p style="font-size: 13px; color: gray">
+              Minimum ₹5,000 | Instant upto ₹50,000
+            </p>
+            <input
+              type="number"
+              id="loanAmount"
+              placeholder="Enter Loan Amount"
+            />
+            <button onclick="approveLoan()">Submit</button>
+            <p id="loanResult"></p>
+          </div>
+        </div>
+
+        <!-- CREATE ACCOUNT -->
+        <div id="create" class="card hidden">
+          <h3>Create Account</h3>
+
+          <input type="text" id="createName" placeholder="Full Name" />
+          <p id="createNameError" class="warning"></p>
+
+          <input type="email" id="createEmail" placeholder="Email" />
+          <p id="createEmailError" class="warning"></p>
+
+          <input
+            type="password"
+            id="createPassword"
+            placeholder="Password (Min 8 Characters)"
+          />
+          <p id="createPasswordError" class="warning"></p>
+
+          <input
+            type="tel"
+            id="createPhone"
+            placeholder="Phone Number (10 digits)"
+          />
+          <p id="createPhoneError" class="warning"></p>
+
+          <button onclick="createAccount()">Create Account</button>
+          <p id="createSuccess" class="success-msg"></p>
+        </div>
+
+        <!-- BALANCE -->
+        <div id="balance" class="card hidden">
+          <h3>Balance Check</h3>
+          <p>Your Current Balance: ₹45,000</p>
+        </div>
+
+        <!-- TRANSFER -->
+        <div id="transfer" class="card hidden">
+          <h3>Money Transfer</h3>
+
+          <input
+            type="text"
+            id="receiverAccount"
+            placeholder="Receiver Account Number (12 digits)"
+          />
+          <p id="receiverError" class="warning"></p>
+
+          <input type="number" id="transferAmount" placeholder="Amount" />
+          <p id="transferError" class="warning"></p>
+
+          <button onclick="transferMoney()">Transfer</button>
+          <p id="transferSuccess" class="success-msg"></p>
+        </div>
+
+        <!-- TRANSACTIONS -->
+        <div id="transactions" class="card hidden">
+          <h3>Transaction History</h3>
+          <p>1. Sent ₹5000</p>
+          <p>2. Received ₹2000</p>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="profile" class="card hidden">
+          <h3>Update Profile</h3>
+
+          <input type="text" id="updateName" placeholder="Update Name" />
+          <p id="updateNameError" class="warning"></p>
+
+          <input type="email" id="updateEmail" placeholder="Update Email" />
+          <p id="updateEmailError" class="warning"></p>
+
+          <input
+            type="tel"
+            id="updatePhone"
+            placeholder="Update Phone Number (10 digits)"
+          />
+          <p id="updatePhoneError" class="warning"></p>
+
+          <button onclick="updateProfile()">Update</button>
+          <p id="profileSuccess" class="success-msg"></p>
+        </div>
+
+        <!-- CHAT -->
+        <div id="chatbot" class="card hidden">
+          <h3>Want To Know About -</h3>
+
+          <div style="margin-bottom: 10px">
+            <button onclick="chatOption('emi')">EMI</button>
+            <button onclick="chatOption('transfer')">Transfer</button>
+            <button onclick="chatOption('loan')">Loan</button>
+            <button onclick="chatOption('Other')">Other</button>
+          </div>
+
+          <div class="chat-box">
+            <p id="chatResponse"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- LOGIN POPUP MODAL -->
+    <div id="loginModal" class="modal hidden">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+        <h3>Login to Hogwarts Bank</h3>
+
+        <!-- Email -->
+        <input type="email" id="loginEmail" placeholder="Enter Email" />
+        <p id="loginEmailError" class="warning"></p>
+
+        <!-- Password -->
+        <input
+          type="password"
+          id="loginPassword"
+          placeholder="Enter Password (Min 8 Characters)"
+        />
+        <p id="loginPasswordError" class="warning"></p>
+
+        <!-- Phone -->
+        <input
+          type="tel"
+          id="loginPhone"
+          placeholder="Enter Phone Number (10 digits)"
+        />
+        <p id="loginPhoneError" class="warning"></p>
+
+        <button onclick="validateLogin()">Login</button>
+
+        <p class="forget-link" onclick="forgotPassword()">Forgot Password?</p>
+        <p id="loginSuccess" class="success-msg"></p>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script2.js') }}"></script>
+  </body>
+</html>
