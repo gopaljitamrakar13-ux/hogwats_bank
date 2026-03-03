@@ -9,13 +9,15 @@ CORS(app)
 # ================= DATABASE CONNECTION =================
 import os
 import psycopg2
+import psycopg2.extras
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set!")
+
 conn = psycopg2.connect(DATABASE_URL)
-cursor = conn.cursor()
-
-
+cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 # ================= HOME =================
 @app.route("/")
@@ -38,7 +40,7 @@ def create_account():
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (name, email, password, phone, 50000, False, 0))
 
-        db.commit()
+        conn.commit()
 
         return jsonify({"success": True, "message": "Account Created Successfully ✅"})
 
@@ -120,7 +122,7 @@ def apply_loan():
         WHERE email = %s
     """, (amount, amount, email))
 
-    db.commit()
+    conn.commit()
 
     return jsonify({"message": status_message})
 
@@ -155,7 +157,7 @@ def transfer():
         VALUES (%s, %s, %s)
     """, (sender_email, "Sent", amount))
 
-    db.commit()
+    conn.commit()
 
     return jsonify({"message": "Money Transferred Successfully ✅"})
 
@@ -195,7 +197,7 @@ def update_profile():
         WHERE email=%s
     """, (name, phone, new_email, old_email))
 
-    db.commit()
+    conn.commit()
 
     # ✅ Update session email
     session["user_email"] = new_email
