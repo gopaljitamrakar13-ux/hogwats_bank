@@ -51,6 +51,13 @@ function createAccount() {
     .then((data) => {
       success.innerHTML = data.message || data.error;
       success.style.color = data.success ? "green" : "red";
+
+      if (data.success) {
+        document.getElementById("createName").value = "";
+        document.getElementById("createEmail").value = "";
+        document.getElementById("createPassword").value = "";
+        document.getElementById("createPhone").value = "";
+      }
     });
 }
 
@@ -101,6 +108,12 @@ function validateLogin() {
       if (data.success) {
         document.getElementById("loginSuccess").innerText = data.message;
         document.getElementById("loginBtn").innerText = "Logout";
+
+        // Clear login fields
+        document.getElementById("loginEmail").value = "";
+        document.getElementById("loginPassword").value = "";
+        document.getElementById("loginPhone").value = "";
+
         closeLoginModal();
       } else {
         document.getElementById("loginPasswordError").innerText =
@@ -248,6 +261,11 @@ function updateProfile() {
 
       if (status === 200) {
         success.style.color = "green";
+
+        // Clear fields
+        document.getElementById("updateName").value = "";
+        document.getElementById("updateEmail").value = "";
+        document.getElementById("updatePhone").value = "";
       } else {
         success.style.color = "red";
       }
@@ -331,10 +349,15 @@ function sendReset() {
 // SHOW / HIDE PASSWORD
 function togglePassword() {
   let pass = document.getElementById("loginPassword");
+  let eye = document.querySelector(".eye-btn");
 
   if (pass.type === "password") {
     pass.type = "text";
+    eye.classList.remove("fa-eye");
+    eye.classList.add("fa-eye-slash");
   } else {
     pass.type = "password";
+    eye.classList.remove("fa-eye-slash");
+    eye.classList.add("fa-eye");
   }
 }
