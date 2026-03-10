@@ -125,10 +125,24 @@ function validateLogin() {
 // ================= LOGOUT / OPEN MODAL =================
 function openLoginModal() {
   document.getElementById("loginModal").classList.remove("hidden");
+
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+  document.getElementById("loginPhone").value = "";
 }
 
 function closeLoginModal() {
   document.getElementById("loginModal").classList.add("hidden");
+
+  // Clear login fields
+  document.getElementById("loginEmail").value = "";
+  document.getElementById("loginPassword").value = "";
+  document.getElementById("loginPhone").value = "";
+
+  // Clear error messages
+  document.getElementById("loginEmailError").innerText = "";
+  document.getElementById("loginPasswordError").innerText = "";
+  document.getElementById("loginPhoneError").innerText = "";
 }
 function logoutUser() {
   fetch("/logout")
