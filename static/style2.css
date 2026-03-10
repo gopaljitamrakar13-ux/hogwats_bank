@@ -55,10 +55,7 @@ body {
 }
 
 /* MAIN CONTENT */
-.main {
-  flex: 1;
-  padding: 20px;
-}
+
 .main {
   flex: 1;
   padding: 20px;
@@ -372,4 +369,52 @@ input {
   font-size: 13px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding-top: 10px;
+}
+
+/* Remove browser default password eye */
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* POPUP MESSAGE */
+
+.popup {
+  position: fixed;
+
+  top: 20px;
+
+  right: 20px;
+
+  background: #2563eb;
+
+  color: white;
+
+  padding: 12px 20px;
+
+  border-radius: 6px;
+
+  font-size: 14px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
+  z-index: 2000;
+
+  animation: fadeIn 0.3s ease;
+}
+
+.popup.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

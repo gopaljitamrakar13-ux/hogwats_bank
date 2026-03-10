@@ -14,7 +14,7 @@ function showSection(id) {
   fetch("/user_details")
     .then((res) => {
       if (res.status === 401) {
-        alert("Please login first ❌");
+        showPopup("Please login first ❌");
         throw new Error("Not logged in");
       }
       return res.json();
@@ -149,7 +149,7 @@ function logoutUser() {
     .then((res) => res.json())
     .then(() => {
       document.getElementById("loginBtn").innerText = "Login";
-      alert("Logged Out Successfully ✅");
+      showPopup("Logged Out Successfully ✅");
     });
 }
 function handleLoginButton() {
@@ -165,11 +165,22 @@ function handleLoginButton() {
 // ================= LOAD BALANCE =================
 function loadBalance() {
   fetch("/user_details")
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 401) {
+        showPopup("Please login first ❌");
+
+        throw new Error("Not logged in");
+      }
+
+      return res.json();
+    })
+
     .then((data) => {
       document.querySelector("#balance p").innerText =
         "Your Current Balance: ₹" + data.balance;
-    });
+    })
+
+    .catch(() => {});
 }
 
 // ================= APPLY LOAN =================
@@ -382,4 +393,18 @@ function toggleSidebar() {
 
   sidebar.classList.toggle("active");
   main.classList.toggle("shift");
+}
+
+function showPopup(message) {
+  let popup = document.getElementById("popupMsg");
+
+  let text = document.getElementById("popupText");
+
+  text.innerText = message;
+
+  popup.classList.remove("hidden");
+
+  setTimeout(() => {
+    popup.classList.add("hidden");
+  }, 3000);
 }
