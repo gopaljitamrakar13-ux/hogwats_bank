@@ -265,3 +265,39 @@ input {
 .eye-btn:hover {
   color: #2563eb;
 }
+
+/* MENU BUTTON */
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #1e293b;
+}
+
+/* MOBILE SIDEBAR */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    left: -240px;
+    top: 0;
+    transition: 0.3s;
+    z-index: 1000;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+}
+
+/* FOOTER */
+
+.bank-footer {
+  background: #1e293b;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 30px;
+  font-size: 14px;
+  border-radius: 8px;
+}

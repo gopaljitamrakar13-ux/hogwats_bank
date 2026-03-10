@@ -375,3 +375,8 @@ function togglePassword() {
     eye.classList.add("fa-eye");
   }
 }
+
+function toggleSidebar() {
+  let sidebar = document.querySelector(".sidebar");
+  sidebar.classList.toggle("active");
+}
