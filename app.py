@@ -109,7 +109,7 @@ def forgot_password():
     user = cursor.fetchone()
 
     if user:
-        return jsonify({"message":"Reset request received. Contact support."})
+        return jsonify({"message":"Password Reset Request Has Been Sent To Your Email.✅"})
     else:
         return jsonify({"message":"Email not found ❌"})
     

@@ -11,6 +11,10 @@
     />
     <link
       rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
       href="{{ url_for('static', filename='style2.css') }}"
     />
   </head>
@@ -176,18 +180,14 @@
         <p id="loginEmailError" class="warning"></p>
 
         <!-- Password -->
-        <!-- <input
-          type="password"
-          id="loginPassword"
-          placeholder="Enter Password (Min 8 Characters)"
-        />-->
+
         <div class="password-container">
           <input
             type="password"
             id="loginPassword"
             placeholder="Enter Password (Min 8 Characters)"
           />
-          <span class="eye-btn" onclick="togglePassword()">👁</span>
+          <i class="fa-solid fa-eye eye-btn" onclick="togglePassword()"></i>
         </div>
         <p id="loginPasswordError" class="warning"></p>
 
