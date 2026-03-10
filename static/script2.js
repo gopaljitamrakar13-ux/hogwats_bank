@@ -378,5 +378,8 @@ function togglePassword() {
 
 function toggleSidebar() {
   let sidebar = document.querySelector(".sidebar");
+  let main = document.querySelector(".main");
+
   sidebar.classList.toggle("active");
+  main.classList.toggle("shift");
 }

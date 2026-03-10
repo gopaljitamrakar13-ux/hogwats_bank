@@ -59,6 +59,16 @@ body {
   flex: 1;
   padding: 20px;
 }
+.main {
+  flex: 1;
+  padding: 20px;
+  margin-left: 0;
+  transition: 0.3s;
+}
+
+.main.shift {
+  margin-left: 240px;
+}
 
 /* HEADER */
 .header {
