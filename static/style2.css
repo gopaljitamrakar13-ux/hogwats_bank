@@ -429,9 +429,6 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 /* Prevent content shift on mobile */
-.main.shift {
-  margin-left: 0;
-}
 
 @media (max-width: 768px) {
   .container {
