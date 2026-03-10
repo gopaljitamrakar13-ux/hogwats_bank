@@ -51,6 +51,30 @@ def create_account():
 
 
 # ================= LOGIN =================
+'''@app.route("/login", methods=["POST"])
+def login():
+    try:
+        data = request.json
+        email = data["email"]
+        password = data["password"]
+
+        cursor.execute(
+            "SELECT * FROM users WHERE email=%s AND password=%s",
+            (email, password)
+        )
+        user = cursor.fetchone()
+
+        if user:
+            session["user_id"] = user["id"]
+            session["user_email"] = user["email"]
+            return jsonify({"success": True, "message": "Login Successful ✅"})
+        else:
+            return jsonify({"success": False, "message": "Invalid Credentials ❌"})
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"success": False, "error": str(e)}), 500'''
+    
 @app.route("/login", methods=["POST"])
 def login():
     try:
@@ -74,6 +98,21 @@ def login():
     except Exception as e:
         conn.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
+    
+@app.route("/forgot_password", methods=["POST"])
+def forgot_password():
+
+    data = request.json
+    email = data["email"]
+
+    cursor.execute("SELECT * FROM users WHERE email=%s",(email,))
+    user = cursor.fetchone()
+
+    if user:
+        return jsonify({"message":"Reset request received. Contact support."})
+    else:
+        return jsonify({"message":"Email not found ❌"})
+    
     user = cursor.fetchone()
 
     if user:

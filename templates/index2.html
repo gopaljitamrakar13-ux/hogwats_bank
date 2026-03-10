@@ -176,11 +176,19 @@
         <p id="loginEmailError" class="warning"></p>
 
         <!-- Password -->
-        <input
+        <!-- <input
           type="password"
           id="loginPassword"
           placeholder="Enter Password (Min 8 Characters)"
-        />
+        />-->
+        <div class="password-container">
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Enter Password (Min 8 Characters)"
+          />
+          <span class="eye-btn" onclick="togglePassword()">👁</span>
+        </div>
         <p id="loginPasswordError" class="warning"></p>
 
         <!-- Phone -->
@@ -195,6 +203,20 @@
 
         <p class="forget-link" onclick="forgotPassword()">Forgot Password?</p>
         <p id="loginSuccess" class="success-msg"></p>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD MODAL -->
+    <div id="forgotModal" class="modal hidden">
+      <div class="modal-content">
+        <span class="close-btn" onclick="closeForgotModal()">&times;</span>
+        <h3>Reset Password</h3>
+
+        <input type="email" id="forgotEmail" placeholder="Enter your Email" />
+
+        <button onclick="sendReset()">Send</button>
+
+        <p id="forgotMsg" class="success-msg"></p>
       </div>
     </div>
 

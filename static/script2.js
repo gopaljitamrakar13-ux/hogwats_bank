@@ -303,5 +303,38 @@ function calculateEMI() {
 
 // ================= FORGOT PASSWORD =================
 function forgotPassword() {
-  alert("Password reset link sent to your email (demo feature)");
+  document.getElementById("loginModal").classList.add("hidden");
+  document.getElementById("forgotModal").classList.remove("hidden");
+}
+
+function closeForgotModal() {
+  document.getElementById("forgotModal").classList.add("hidden");
+}
+
+function sendReset() {
+  let email = document.getElementById("forgotEmail").value;
+  let msg = document.getElementById("forgotMsg");
+
+  fetch("/forgot_password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      msg.innerText = data.message;
+    });
+}
+
+// SHOW / HIDE PASSWORD
+function togglePassword() {
+  let pass = document.getElementById("loginPassword");
+
+  if (pass.type === "password") {
+    pass.type = "text";
+  } else {
+    pass.type = "password";
+  }
 }
