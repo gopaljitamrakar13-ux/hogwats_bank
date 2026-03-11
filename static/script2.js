@@ -123,6 +123,7 @@ function validateLogin() {
         document.getElementById("loginPhone").value = "";
         loadBalance();
         closeLoginModal();
+        showSection("dashboard");
       } else {
         document.getElementById("loginPasswordError").innerText =
           "Invalid Credentials ❌";
@@ -157,6 +158,11 @@ function logoutUser() {
     .then((res) => res.json())
     .then(() => {
       document.getElementById("loginBtn").innerText = "Login";
+
+      document.getElementById("welcomeUser").innerText = "Welcome";
+      document.querySelector("#balance p").innerText =
+        "Please login to view balance";
+
       showPopup("Logged Out Successfully ✅");
     });
 }
@@ -174,16 +180,25 @@ function handleLoginButton() {
 
 function loadBalance() {
   fetch("/user_details")
-    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === 401) {
+        document.getElementById("welcomeUser").innerText = "Welcome";
+        document.querySelector("#balance p").innerText =
+          "Please login to view balance";
+        return null;
+      }
+      return res.json();
+    })
     .then((data) => {
-      // show welcome name
+      if (!data) return;
+
       document.getElementById("welcomeUser").innerText =
         "Welcome " + data.name + " 👋";
 
-      // show balance
       document.querySelector("#balance p").innerText =
         "Your Current Balance: ₹" + data.balance;
-    });
+    })
+    .catch(() => {});
 }
 
 // ================= APPLY LOAN =================
