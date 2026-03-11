@@ -113,7 +113,7 @@ function validateLogin() {
         document.getElementById("loginEmail").value = "";
         document.getElementById("loginPassword").value = "";
         document.getElementById("loginPhone").value = "";
-
+        loadBalance();
         closeLoginModal();
       } else {
         document.getElementById("loginPasswordError").innerText =
@@ -163,7 +163,7 @@ function handleLoginButton() {
 }
 
 // ================= LOAD BALANCE =================
-function loadBalance() {
+/*function loadBalance() {
   fetch("/user_details")
     .then((res) => {
       if (res.status === 401) {
@@ -181,6 +181,20 @@ function loadBalance() {
     })
 
     .catch(() => {});
+}*/
+
+function loadBalance() {
+  fetch("/user_details")
+    .then((res) => res.json())
+    .then((data) => {
+      // show welcome name
+      document.getElementById("welcomeUser").innerText =
+        "Welcome " + data.name + " 👋";
+
+      // show balance
+      document.querySelector("#balance p").innerText =
+        "Your Current Balance: ₹" + data.balance;
+    });
 }
 
 // ================= APPLY LOAN =================
@@ -244,7 +258,8 @@ function loadTransactions() {
 
       data.forEach((tx) => {
         let p = document.createElement("p");
-        p.innerText = tx.type + " ₹" + tx.amount;
+        p.innerText =
+          tx.type + " ₹" + tx.amount + " → Account " + tx.receiver_account;
         section.appendChild(p);
       });
     });
@@ -408,3 +423,17 @@ function showPopup(message) {
     popup.classList.add("hidden");
   }, 3000);
 }
+
+// AUTO CLOSE SIDEBAR ON MOBILE AFTER CLICK
+
+document.querySelectorAll(".sidebar ul li").forEach((item) => {
+  item.addEventListener("click", function () {
+    let sidebar = document.querySelector(".sidebar");
+    let main = document.querySelector(".main");
+
+    if (window.innerWidth <= 768) {
+      sidebar.classList.remove("active");
+      main.classList.remove("shift");
+    }
+  });
+});

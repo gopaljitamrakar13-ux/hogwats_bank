@@ -124,7 +124,7 @@ def user_details():
 
 
 # ================= APPLY LOAN =================
-@app.route("/apply_loan", methods=["POST"])
+'''@app.route("/apply_loan", methods=["POST"])
 def apply_loan():
     if "user_email" not in session:
         return jsonify({"message": "Please login first ❌"}), 401
@@ -151,7 +151,48 @@ def apply_loan():
 
     conn.commit()
 
-    return jsonify({"message": status_message})
+    return jsonify({"message": status_message})'''
+@app.route("/apply_loan", methods=["POST"])
+def apply_loan():
+
+    if "user_email" not in session:
+        return jsonify({"message": "Please login first ❌"}), 401
+
+    data = request.json
+    amount = int(data["amount"])
+    email = session["user_email"]
+
+    if amount < 5000:
+        return jsonify({"message": "❌ Minimum loan amount is ₹5,000"})
+
+    # ✅ Instant approval
+    if amount <= 50000:
+
+        cursor.execute("""
+            UPDATE users
+            SET loan_taken = TRUE,
+                loan_amount = %s,
+                balance = balance + %s
+            WHERE email = %s
+        """, (amount, amount, email))
+
+        conn.commit()
+
+        return jsonify({"message": "Loan Approved ✅ Amount Added to Balance"})
+
+    # ⏳ Loan under review
+    else:
+
+        cursor.execute("""
+            UPDATE users
+            SET loan_taken = TRUE,
+                loan_amount = %s
+            WHERE email = %s
+        """, (amount, email))
+
+        conn.commit()
+
+        return jsonify({"message": "Loan Under Review ⏳ Approval within 24 hours"})
 
 
 # ================= TRANSFER MONEY =================
@@ -162,6 +203,7 @@ def transfer():
 
     data = request.json
     amount = int(data["amount"])
+    receiver_account = data["receiver"]
     sender_email = session["user_email"]
 
     cursor.execute("SELECT balance FROM users WHERE email=%s", (sender_email,))
@@ -180,9 +222,9 @@ def transfer():
     """, (amount, sender_email))
 
     cursor.execute("""
-        INSERT INTO transactions (email, type, amount)
-        VALUES (%s, %s, %s)
-    """, (sender_email, "Sent", amount))
+    INSERT INTO transactions (email, receiver_account, type, amount)
+    VALUES (%s, %s, %s, %s)
+    """, (sender_email, receiver_account, "Sent", amount))
 
     conn.commit()
 
@@ -241,10 +283,11 @@ def get_transactions():
     email = session["user_email"]
 
     cursor.execute("""
-        SELECT type, amount
-        FROM transactions
-        WHERE email=%s
-    """, (email,))
+    SELECT type, amount, receiver_email
+    FROM transactions
+    WHERE email=%s
+    ORDER BY id DESC
+""", (email,))
 
     transactions = cursor.fetchall()
     return jsonify(transactions)
