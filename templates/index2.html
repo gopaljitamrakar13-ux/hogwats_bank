@@ -107,7 +107,7 @@
         <!-- BALANCE -->
         <div id="balance" class="card hidden">
           <h3>Balance Check</h3>
-          <p>Your Current Balance: ₹45,000</p>
+          <p>Please login to view balance</p>
         </div>
 
         <!-- TRANSFER -->
@@ -259,6 +259,7 @@
     <script src="{{ url_for('static', filename='script2.js') }}"></script>
     <script>
       window.onload = function () {
+        checkLoginStatus();
         showSection("dashboard");
       };
     </script>

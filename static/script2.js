@@ -227,33 +227,6 @@ function approveLoan() {
 }
 
 // ================= TRANSFER MONEY =================
-/*function transferMoney() {
-  let amount = document.getElementById("transferAmount").value;
-  let success = document.getElementById("transferSuccess");
-  let error = document.getElementById("transferError");
-
-  if (!amount) {
-    error.innerHTML = "Enter valid amount";
-    return;
-  }
-
-  fetch("/transfer", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.message.includes("Insufficient")) {
-        error.innerHTML = data.message;
-        success.innerHTML = "";
-      } else {
-        success.innerHTML = data.message;
-        error.innerHTML = "";
-        loadBalance();
-      }
-    });
-}*/
 
 function transferMoney() {
   let receiver = document.getElementById("receiverAccount").value.trim();
@@ -488,3 +461,29 @@ document.querySelectorAll(".sidebar ul li").forEach((item) => {
     }
   });
 });
+
+// CHECK LOGIN STATUS WHEN PAGE LOADS
+
+function checkLoginStatus() {
+  fetch("/user_details")
+    .then((res) => {
+      if (res.status === 401) {
+        document.getElementById("loginBtn").innerText = "Login";
+        document.getElementById("welcomeUser").innerText = "Welcome";
+        document.querySelector("#balance p").innerText =
+          "Please login to view balance";
+        return null;
+      }
+      return res.json();
+    })
+    .then((data) => {
+      if (!data) return;
+
+      document.getElementById("loginBtn").innerText = "Logout";
+      document.getElementById("welcomeUser").innerText =
+        "Welcome " + data.name + " 👋";
+
+      document.querySelector("#balance p").innerText =
+        "Your Current Balance: ₹" + data.balance;
+    });
+}
