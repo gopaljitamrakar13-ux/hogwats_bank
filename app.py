@@ -84,7 +84,7 @@ def forgot_password():
     email = data["email"]
 
     cursor.execute("SELECT * FROM users WHERE email=%s",(email,))
-    user = cursor.fetchone()
+    
 
     if user:
         return jsonify({"message":"Password Reset Request Has Been Sent To Your Email.✅"})
@@ -124,34 +124,7 @@ def user_details():
 
 
 # ================= APPLY LOAN =================
-'''@app.route("/apply_loan", methods=["POST"])
-def apply_loan():
-    if "user_email" not in session:
-        return jsonify({"message": "Please login first ❌"}), 401
 
-    data = request.json
-    amount = int(data["amount"])
-    email = session["user_email"]
-
-    if amount < 5000:
-        return jsonify({"message": "❌ Minimum loan amount is ₹5,000"})
-
-    if amount <= 50000:
-        status_message = "Loan Approved ✅"
-    else:
-        status_message = "Loan Under Review ⏳"
-
-    cursor.execute("""
-        UPDATE users
-        SET loan_taken = TRUE,
-            loan_amount = %s,
-            balance = balance + %s
-        WHERE email = %s
-    """, (amount, amount, email))
-
-    conn.commit()
-
-    return jsonify({"message": status_message})'''
 @app.route("/apply_loan", methods=["POST"])
 def apply_loan():
 
@@ -203,7 +176,7 @@ def transfer():
 
     data = request.json
     amount = int(data["amount"])
-    receiver_account = data["receiver"]
+    receiver_account = data["receiver_account"]
     sender_email = session["user_email"]
 
     cursor.execute("SELECT balance FROM users WHERE email=%s", (sender_email,))
@@ -228,7 +201,7 @@ def transfer():
 
     conn.commit()
 
-    return jsonify({"message": "Money Transferred Successfully ✅"})
+    return jsonify({"success": True, "message": "Money Transferred Successfully ✅"})
 
 
 # ================= UPDATE PROFILE =================
@@ -283,11 +256,11 @@ def get_transactions():
     email = session["user_email"]
 
     cursor.execute("""
-    SELECT type, amount, receiver_email
+    SELECT type, amount, receiver_account
     FROM transactions
     WHERE email=%s
     ORDER BY id DESC
-""", (email,))
+    """, (email,))
 
     transactions = cursor.fetchall()
     return jsonify(transactions)
