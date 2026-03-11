@@ -42,6 +42,14 @@ function createAccount() {
     return;
   }
 
+  if (phone.length !== 10 || isNaN(phone)) {
+    document.getElementById("createPhoneError").innerText =
+      "Phone number must be 10 digits";
+    return;
+  } else {
+    document.getElementById("createPhoneError").innerText = "";
+  }
+
   fetch("/create_account", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -163,25 +171,6 @@ function handleLoginButton() {
 }
 
 // ================= LOAD BALANCE =================
-/*function loadBalance() {
-  fetch("/user_details")
-    .then((res) => {
-      if (res.status === 401) {
-        showPopup("Please login first ❌");
-
-        throw new Error("Not logged in");
-      }
-
-      return res.json();
-    })
-
-    .then((data) => {
-      document.querySelector("#balance p").innerText =
-        "Your Current Balance: ₹" + data.balance;
-    })
-
-    .catch(() => {});
-}*/
 
 function loadBalance() {
   fetch("/user_details")
@@ -216,11 +205,14 @@ function approveLoan() {
     .then((res) => res.json())
     .then((data) => {
       result.innerHTML = data.message;
+
+      // ✅ Clear the input after loan apply
+      document.getElementById("loanAmount").value = "";
     });
 }
 
 // ================= TRANSFER MONEY =================
-function transferMoney() {
+/*function transferMoney() {
   let amount = document.getElementById("transferAmount").value;
   let success = document.getElementById("transferSuccess");
   let error = document.getElementById("transferError");
@@ -246,8 +238,52 @@ function transferMoney() {
         loadBalance();
       }
     });
-}
+}*/
 
+function transferMoney() {
+  let receiver = document.getElementById("receiverAccount").value.trim();
+  let amount = document.getElementById("transferAmount").value;
+
+  let success = document.getElementById("transferSuccess");
+  let error = document.getElementById("transferError");
+
+  if (receiver.length !== 12 || isNaN(receiver)) {
+    document.getElementById("receiverError").innerText =
+      "Account number must be 12 digits";
+    return;
+  } else {
+    document.getElementById("receiverError").innerText = "";
+  }
+
+  if (!amount || amount <= 0) {
+    error.innerText = "Enter valid amount";
+    return;
+  }
+
+  fetch("/transfer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      receiver_account: receiver,
+      amount: amount,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        success.innerText = data.message;
+        error.innerText = "";
+
+        document.getElementById("transferAmount").value = "";
+        document.getElementById("receiverAccount").value = "";
+
+        loadBalance();
+      } else {
+        error.innerText = data.message;
+        success.innerText = "";
+      }
+    });
+}
 // ================= LOAD TRANSACTIONS =================
 function loadTransactions() {
   fetch("/transactions")

@@ -23,7 +23,7 @@
     <!-- FLEX CONTAINER -->
     <div class="container">
       <!-- SIDEBAR -->
-      <div class="sidebar">
+      <div class="sidebar" id="sidebar">
         <h2>🏦 Hogwarts Bank</h2>
         <ul>
           <li onclick="showSection('dashboard')">Dashboard</li>
@@ -257,5 +257,10 @@
       <span id="popupText"></span>
     </div>
     <script src="{{ url_for('static', filename='script2.js') }}"></script>
+    <script>
+      window.onload = function () {
+        showSection("dashboard");
+      };
+    </script>
   </body>
 </html>
