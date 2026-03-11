@@ -41,7 +41,25 @@ function createAccount() {
     success.style.color = "red";
     return;
   }
+  // Email validation
+  if (!email.includes("@") || !email.includes(".")) {
+    document.getElementById("createEmailError").innerText =
+      "Enter valid email address";
+    return;
+  } else {
+    document.getElementById("createEmailError").innerText = "";
+  }
 
+  // Password validation
+  if (password.length < 8) {
+    document.getElementById("createPasswordError").innerText =
+      "Password must be at least 8 characters";
+    return;
+  } else {
+    document.getElementById("createPasswordError").innerText = "";
+  }
+
+  // Phone validation
   if (phone.length !== 10 || isNaN(phone)) {
     document.getElementById("createPhoneError").innerText =
       "Phone number must be 10 digits";
