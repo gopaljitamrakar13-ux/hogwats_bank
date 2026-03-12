@@ -191,19 +191,33 @@ function closeLoginModal() {
   document.getElementById("loginPasswordError").innerText = "";
   document.getElementById("loginPhoneError").innerText = "";
 }
+
 function logoutUser() {
   fetch("/logout")
     .then((res) => res.json())
     .then(() => {
       document.getElementById("loginBtn").innerText = "Login";
 
+      // Reset dashboard
       document.getElementById("welcomeUser").innerText = "Welcome";
+      document.getElementById("accountNumber").innerText = "";
+
       document.querySelector("#balance p").innerText =
         "Please login to view balance";
+
+      // Clear create account success message
+      document.getElementById("createSuccess").innerHTML = "";
+
+      // Clear login success message
+      document.getElementById("loginSuccess").innerText = "";
+
+      // Go back to dashboard
+      showSection("dashboard");
 
       showPopup("Logged Out Successfully ✅");
     });
 }
+
 function handleLoginButton() {
   let btn = document.getElementById("loginBtn");
 
