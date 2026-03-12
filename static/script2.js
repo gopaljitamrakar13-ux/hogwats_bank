@@ -446,6 +446,21 @@ function togglePassword() {
   }
 }
 
+function toggleCreatePassword() {
+  let pass = document.getElementById("createPassword");
+  let eye = event.target;
+
+  if (pass.type === "password") {
+    pass.type = "text";
+    eye.classList.remove("fa-eye");
+    eye.classList.add("fa-eye-slash");
+  } else {
+    pass.type = "password";
+    eye.classList.remove("fa-eye-slash");
+    eye.classList.add("fa-eye");
+  }
+}
+
 function toggleSidebar() {
   let sidebar = document.querySelector(".sidebar");
   let main = document.querySelector(".main");
