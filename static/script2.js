@@ -215,6 +215,8 @@ function loadBalance() {
 
       document.querySelector("#balance p").innerText =
         "Your Current Balance: ₹" + data.balance;
+
+      document.getElementById("accountNumber").innerText = data.account_number;
     })
     .catch(() => {});
 }

@@ -1,6 +1,15 @@
 from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 
+import random
+
+def generate_account_number():
+    while True:
+        acc = str(random.randint(100000000000, 999999999999))
+        cursor.execute("SELECT id FROM users WHERE account_number=%s", (acc,))
+        if not cursor.fetchone():
+            return acc
+
 
 app = Flask(__name__)
 app.secret_key = "hogwarts_secret_key_123"
@@ -26,7 +35,7 @@ def home():
 
 
 # ================= CREATE ACCOUNT =================
-@app.route("/create_account", methods=["POST"])
+'''@app.route("/create_account", methods=["POST"])
 def create_account():
     try:
         data = request.json
@@ -47,6 +56,35 @@ def create_account():
  
     except Exception as e:
         conn.rollback()   # VERY IMPORTANT
+        return jsonify({"success": False, "error": str(e)}), 500'''
+    
+@app.route("/create_account", methods=["POST"])
+def create_account():
+    try:
+        data = request.json
+        name = data["name"]
+        email = data["email"]
+        password = data["password"]
+        phone = data["phone"]
+
+        account_number = generate_account_number()
+
+        cursor.execute("""
+            INSERT INTO users 
+            (name, email, password, phone, balance, loan_taken, loan_amount, account_number)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+        """,(name,email,password,phone,50000,False,0,account_number))
+
+        conn.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Account Created Successfully ✅",
+            "account_number": account_number
+        })
+
+    except Exception as e:
+        conn.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -112,7 +150,7 @@ def user_details():
     email = session["user_email"]
 
     cursor.execute("""
-        SELECT name, email, phone, balance, loan_taken, loan_amount
+        SELECT name, email, phone, balance, loan_taken, loan_amount, account_number
         FROM users WHERE email=%s
     """, (email,))
     user = cursor.fetchone()
@@ -169,7 +207,7 @@ def apply_loan():
 
 
 # ================= TRANSFER MONEY =================
-@app.route("/transfer", methods=["POST"])
+'''@app.route("/transfer", methods=["POST"])
 def transfer():
     if "user_email" not in session:
         return jsonify({"message": "Please login first ❌"}), 401
@@ -201,7 +239,67 @@ def transfer():
 
     conn.commit()
 
-    return jsonify({"success": True, "message": "Money Transferred Successfully ✅"})
+    return jsonify({"success": True, "message": "Money Transferred Successfully ✅"})'''
+    
+@app.route("/transfer", methods=["POST"])
+def transfer():
+
+    if "user_email" not in session:
+        return jsonify({"message": "Please login first ❌"}), 401
+
+    data = request.json
+    amount = int(data["amount"])
+    receiver_account = data["receiver_account"]
+    sender_email = session["user_email"]
+
+    # Check sender balance
+    cursor.execute("SELECT balance FROM users WHERE email=%s", (sender_email,))
+    sender = cursor.fetchone()
+
+    if not sender:
+        return jsonify({"message": "Sender not found ❌"})
+
+    if sender["balance"] < amount:
+        return jsonify({"message": "❌ Insufficient Balance"})
+
+    # Check receiver account
+    cursor.execute(
+        "SELECT email FROM users WHERE account_number=%s",
+        (receiver_account,)
+    )
+    receiver = cursor.fetchone()
+
+    if not receiver:
+        return jsonify({"message": "Receiver account not found ❌"})
+
+    receiver_email = receiver["email"]
+
+    # Deduct sender balance
+    cursor.execute("""
+        UPDATE users
+        SET balance = balance - %s
+        WHERE email = %s
+    """, (amount, sender_email))
+
+    # Add receiver balance
+    cursor.execute("""
+        UPDATE users
+        SET balance = balance + %s
+        WHERE account_number = %s
+    """, (amount, receiver_account))
+
+    # Store transaction
+    cursor.execute("""
+        INSERT INTO transactions (email, receiver_account, type, amount)
+        VALUES (%s,%s,%s,%s)
+    """,(sender_email,receiver_account,"Sent",amount))
+
+    conn.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Money Transferred Successfully ✅"
+    })
 
 
 # ================= UPDATE PROFILE =================
