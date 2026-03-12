@@ -75,16 +75,36 @@ function createAccount() {
   })
     .then((res) => res.json())
     .then((data) => {
-      success.innerHTML = data.message || data.error;
-      success.style.color = data.success ? "green" : "red";
-
       if (data.success) {
+        let acc = data.account_number;
+
+        success.innerHTML =
+          data.message +
+          "<br><strong>Your Account Number: " +
+          acc +
+          "</strong> " +
+          `<button onclick="copyAccount('${acc}')" class="copy-btn">
+        <i class="fa-solid fa-copy"></i>
+      </button>`;
+
+        success.style.color = "green";
+
+        showPopup("Account Created Successfully 🎉");
+
         document.getElementById("createName").value = "";
         document.getElementById("createEmail").value = "";
         document.getElementById("createPassword").value = "";
         document.getElementById("createPhone").value = "";
+      } else {
+        success.innerHTML = data.error;
+        success.style.color = "red";
       }
     });
+}
+/*copy function*/
+function copyAccount(acc) {
+  navigator.clipboard.writeText(acc);
+  showPopup("Account number copied 📋");
 }
 
 // ================= LOGIN VALIDATION + LOGIN =================
@@ -300,6 +320,11 @@ function loadTransactions() {
       let section = document.getElementById("transactions");
       section.innerHTML = "<h3>Transaction History</h3>";
 
+      if (data.length === 0) {
+        section.innerHTML += "<p>No transactions yet</p>";
+        return;
+      }
+
       data.forEach((tx) => {
         let p = document.createElement("p");
         p.innerText =
@@ -445,7 +470,7 @@ function togglePassword() {
     eye.classList.add("fa-eye");
   }
 }
-
+/* create account */
 function toggleCreatePassword() {
   let pass = document.getElementById("createPassword");
   let eye = event.target;

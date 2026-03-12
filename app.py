@@ -35,28 +35,7 @@ def home():
 
 
 # ================= CREATE ACCOUNT =================
-'''@app.route("/create_account", methods=["POST"])
-def create_account():
-    try:
-        data = request.json
-        name = data["name"]
-        email = data["email"]
-        password = data["password"]
-        phone = data["phone"]
 
-        cursor.execute("""
-            INSERT INTO users (name, email, password, phone, balance, loan_taken, loan_amount)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (name, email, password, phone, 50000, False, 0))
-
-        conn.commit()
-
-        return jsonify({"success": True, "message": "Account Created Successfully ✅"})
-
- 
-    except Exception as e:
-        conn.rollback()   # VERY IMPORTANT
-        return jsonify({"success": False, "error": str(e)}), 500'''
     
 @app.route("/create_account", methods=["POST"])
 def create_account():
@@ -66,6 +45,16 @@ def create_account():
         email = data["email"]
         password = data["password"]
         phone = data["phone"]
+
+        # ✅ Check if email already exists
+        cursor.execute("SELECT id FROM users WHERE email=%s", (email,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+         return jsonify({
+        "success": False,
+        "error": "Email already registered ❌"
+        })
 
         account_number = generate_account_number()
 
@@ -115,25 +104,41 @@ def login():
         conn.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
     
-@app.route("/forgot_password", methods=["POST"])
+#=========forget password========
+'''@app.route("/forgot_password", methods=["POST"])
 def forgot_password():
 
     data = request.json
     email = data["email"]
 
     cursor.execute("SELECT * FROM users WHERE email=%s",(email,))
-    
+    user = cursor.fetchone()
 
     if user:
         return jsonify({"message":"Password Reset Request Has Been Sent To Your Email.✅"})
     else:
-        return jsonify({"message":"Email not found ❌"})
+        return jsonify({"message":"Email not found ❌"})'''
     
+@app.route("/forgot_password", methods=["POST"])
+def forgot_password():
+
+    data = request.json
+    email = data["email"]
+
+    # Check if email exists
+    cursor.execute("SELECT id FROM users WHERE email=%s", (email,))
     user = cursor.fetchone()
 
-
-
-
+    if user:
+        return jsonify({
+            "success": True,
+            "message": "Password reset request sent to your email ✅"
+        })
+    else:
+        return jsonify({
+            "success": False,
+            "message": "Email not found in our records ❌"
+        })
 # ================= LOGOUT =================
 @app.route("/logout")
 def logout():
@@ -206,41 +211,7 @@ def apply_loan():
         return jsonify({"message": "Loan Under Review ⏳ Approval within 24 hours"})
 
 
-# ================= TRANSFER MONEY =================
-'''@app.route("/transfer", methods=["POST"])
-def transfer():
-    if "user_email" not in session:
-        return jsonify({"message": "Please login first ❌"}), 401
-
-    data = request.json
-    amount = int(data["amount"])
-    receiver_account = data["receiver_account"]
-    sender_email = session["user_email"]
-
-    cursor.execute("SELECT balance FROM users WHERE email=%s", (sender_email,))
-    user = cursor.fetchone()
-
-    if not user:
-        return jsonify({"message": "User not found"})
-
-    if user["balance"] < amount:
-        return jsonify({"message": "❌ Insufficient Balance"})
-
-    cursor.execute("""
-        UPDATE users
-        SET balance = balance - %s
-        WHERE email = %s
-    """, (amount, sender_email))
-
-    cursor.execute("""
-    INSERT INTO transactions (email, receiver_account, type, amount)
-    VALUES (%s, %s, %s, %s)
-    """, (sender_email, receiver_account, "Sent", amount))
-
-    conn.commit()
-
-    return jsonify({"success": True, "message": "Money Transferred Successfully ✅"})'''
-    
+# ================= TRANSFER MONEY =================    
 @app.route("/transfer", methods=["POST"])
 def transfer():
 
