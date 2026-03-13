@@ -254,7 +254,7 @@ function loadBalance() {
       document.getElementById("accountNumber").innerText = data.account_number;
 
       // Load credit history
-      fetch("/credit_history")
+      /* fetch("/credit_history")
         .then((res) => res.json())
         .then((credits) => {
           let balanceSection = document.getElementById("balance");
@@ -288,7 +288,7 @@ function loadBalance() {
 
             balanceSection.appendChild(row);
           });
-        });
+        });*/
     })
     .catch(() => {});
 }
