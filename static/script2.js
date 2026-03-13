@@ -342,8 +342,25 @@ function loadTransactions() {
 
       data.forEach((tx) => {
         let p = document.createElement("p");
-        p.innerText =
-          tx.type + " ₹" + tx.amount + " → Account " + tx.receiver_account;
+        if (tx.type === "Received") {
+          p.innerText =
+            "Received ₹" +
+            tx.amount +
+            " from " +
+            tx.sender_name +
+            " (AC: " +
+            tx.sender_account +
+            ")";
+        } else {
+          p.innerText =
+            "Sent ₹" +
+            tx.amount +
+            " → " +
+            tx.receiver_name +
+            " (AC: " +
+            tx.receiver_account +
+            ")";
+        }
         section.appendChild(p);
       });
     });

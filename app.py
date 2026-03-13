@@ -258,7 +258,7 @@ def transfer():
         WHERE account_number = %s
     """, (amount, receiver_account))
 
-    # Store transaction
+    # Store transaction 
     cursor.execute("""
     INSERT INTO transactions 
     (email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
@@ -267,6 +267,20 @@ def transfer():
         sender_email,
         receiver_account,
         "Sent",
+        amount,
+        sender["name"],
+        sender["account_number"],
+        receiver["name"]
+))  
+    # Store receiver transaction
+    cursor.execute("""
+    INSERT INTO transactions 
+    (email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
+    VALUES (%s,%s,%s,%s,%s,%s,%s)
+    """,(
+        receiver_email,
+        sender["account_number"],
+        "Received",
         amount,
         sender["name"],
         sender["account_number"],
