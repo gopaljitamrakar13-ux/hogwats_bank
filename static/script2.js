@@ -390,7 +390,7 @@ function loadTransactions() {
 
         date.className = "tx-date";
         date.innerText = new Date(tx.created_at).toLocaleString();
-        let p = document.createElement("p");
+
         if (tx.type === "Received") {
           text.innerText =
             "Received ₹" +
@@ -400,7 +400,7 @@ function loadTransactions() {
             " (AC: " +
             tx.sender_account +
             ")";
-          p.style.color = "green";
+          text.style.color = "green";
         } else {
           text.innerText =
             "Sent ₹" +
@@ -410,7 +410,7 @@ function loadTransactions() {
             " (AC: " +
             tx.receiver_account +
             ")";
-          p.style.color = "red";
+          text.style.color = "red";
         }
 
         row.appendChild(text);
