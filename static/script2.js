@@ -266,9 +266,11 @@ function loadBalance() {
             "</p>";
 
           credits.forEach((tx) => {
-            let p = document.createElement("p");
+            let row = document.createElement("div");
+            row.className = "transaction-row";
 
-            p.innerText =
+            let text = document.createElement("span");
+            text.innerText =
               "Money credited ₹" +
               tx.amount +
               " from " +
@@ -277,7 +279,14 @@ function loadBalance() {
               tx.sender_account +
               ")";
 
-            balanceSection.appendChild(p);
+            let date = document.createElement("span");
+            date.className = "tx-date";
+            date.innerText = new Date(tx.created_at).toLocaleString();
+
+            row.appendChild(text);
+            row.appendChild(date);
+
+            balanceSection.appendChild(row);
           });
         });
     })
@@ -343,6 +352,10 @@ function transferMoney() {
     .then((data) => {
       if (data.success) {
         success.innerText = data.message;
+
+        setTimeout(() => {
+          success.innerText = "";
+        }, 3000);
         error.innerText = "";
 
         document.getElementById("transferAmount").value = "";
@@ -369,9 +382,17 @@ function loadTransactions() {
       }
 
       data.forEach((tx) => {
-        let p = document.createElement("p");
+        let row = document.createElement("div");
+        row.className = "transaction-row";
+
+        let text = document.createElement("span");
+        let date = document.createElement("span");
+
+        date.className = "tx-date";
+        date.innerText = new Date(tx.created_at).toLocaleString();
+
         if (tx.type === "Received") {
-          p.innerText =
+          text.innerText =
             "Received ₹" +
             tx.amount +
             " from " +
@@ -380,7 +401,7 @@ function loadTransactions() {
             tx.sender_account +
             ")";
         } else {
-          p.innerText =
+          text.innerText =
             "Sent ₹" +
             tx.amount +
             " → " +
@@ -389,7 +410,11 @@ function loadTransactions() {
             tx.receiver_account +
             ")";
         }
-        section.appendChild(p);
+
+        row.appendChild(text);
+        row.appendChild(date);
+
+        section.appendChild(row);
       });
     });
 }

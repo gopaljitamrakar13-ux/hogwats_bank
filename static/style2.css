@@ -487,3 +487,15 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .copy-btn:hover {
   color: #1e40af;
 }
+
+.transaction-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tx-date {
+  color: gray;
+  font-size: 13px;
+}
