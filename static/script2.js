@@ -400,6 +400,7 @@ function loadTransactions() {
             " (AC: " +
             tx.sender_account +
             ")";
+          p.style.color = "green";
         } else {
           text.innerText =
             "Sent ₹" +
@@ -409,6 +410,7 @@ function loadTransactions() {
             " (AC: " +
             tx.receiver_account +
             ")";
+          p.style.color = "red";
         }
 
         row.appendChild(text);
