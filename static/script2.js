@@ -390,7 +390,7 @@ function loadTransactions() {
 
         date.className = "tx-date";
         date.innerText = new Date(tx.created_at).toLocaleString();
-
+        let p = document.createElement("p");
         if (tx.type === "Received") {
           text.innerText =
             "Received ₹" +
