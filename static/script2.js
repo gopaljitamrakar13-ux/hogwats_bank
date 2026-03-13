@@ -147,7 +147,7 @@ function validateLogin() {
   fetch("/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, phone }),
   })
     .then((res) => res.json())
     .then((data) => {
@@ -252,6 +252,34 @@ function loadBalance() {
         "Your Current Balance: ₹" + data.balance;
 
       document.getElementById("accountNumber").innerText = data.account_number;
+
+      // Load credit history
+      fetch("/credit_history")
+        .then((res) => res.json())
+        .then((credits) => {
+          let balanceSection = document.getElementById("balance");
+
+          // Reset balance section
+          balanceSection.innerHTML =
+            "<h3>Balance Check</h3><p>Your Current Balance: ₹" +
+            data.balance +
+            "</p>";
+
+          credits.forEach((tx) => {
+            let p = document.createElement("p");
+
+            p.innerText =
+              "Money credited ₹" +
+              tx.amount +
+              " from " +
+              tx.sender_name +
+              " (AC: " +
+              tx.sender_account +
+              ")";
+
+            balanceSection.appendChild(p);
+          });
+        });
     })
     .catch(() => {});
 }

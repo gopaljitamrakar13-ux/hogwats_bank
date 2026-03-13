@@ -86,11 +86,13 @@ def login():
         data = request.json
         email = data["email"]
         password = data["password"]
-
+        phone = data["phone"]
+        
         cursor.execute(
-            "SELECT * FROM users WHERE email=%s AND password=%s",
-            (email, password)
+        "SELECT * FROM users WHERE email=%s AND password=%s AND phone=%s",
+         (email, password, phone)
         )
+        
         user = cursor.fetchone()
 
         if user:
@@ -151,6 +153,26 @@ def user_details():
         return jsonify(user)
     else:
         return jsonify({"message": "User not found"})
+    
+# ================= CREDIT HISTORY =================
+@app.route("/credit_history")
+def credit_history():
+
+    if "user_email" not in session:
+        return jsonify({"message": "Please login first ❌"}), 401
+
+    email = session["user_email"]
+
+    cursor.execute("""
+    SELECT amount, sender_name, sender_account, created_at
+    FROM transactions
+    WHERE email=%s AND type='Received'
+    ORDER BY id DESC
+    """, (email,))
+
+    credits = cursor.fetchall()
+
+    return jsonify(credits)
 
 
 # ================= APPLY LOAN =================
@@ -347,7 +369,8 @@ def get_transactions():
     email = session["user_email"]
 
     cursor.execute("""
-    SELECT type, amount, receiver_account, receiver_name
+    SELECT type, amount, receiver_account, receiver_name,
+    sender_name, sender_account, created_at
     FROM transactions
     WHERE email=%s
     ORDER BY id DESC
