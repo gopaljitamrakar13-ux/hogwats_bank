@@ -211,7 +211,11 @@ def transfer():
     sender_email = session["user_email"]
 
     # Check sender balance
-    cursor.execute("SELECT balance FROM users WHERE email=%s", (sender_email,))
+    cursor.execute("""
+    SELECT name, account_number, balance 
+    FROM users 
+    WHERE email=%s
+    """, (sender_email,))
     sender = cursor.fetchone()
 
     if not sender:
@@ -221,10 +225,11 @@ def transfer():
         return jsonify({"message": "❌ Insufficient Balance"})
 
     # Check receiver account
-    cursor.execute(
-        "SELECT email FROM users WHERE account_number=%s",
-        (receiver_account,)
-    )
+    cursor.execute("""
+    SELECT name, email 
+    FROM users 
+    WHERE account_number=%s
+    """, (receiver_account,))
     receiver = cursor.fetchone()
 
     if not receiver:
@@ -255,9 +260,18 @@ def transfer():
 
     # Store transaction
     cursor.execute("""
-        INSERT INTO transactions (email, receiver_account, type, amount)
-        VALUES (%s,%s,%s,%s)
-    """,(sender_email,receiver_account,"Sent",amount))
+    INSERT INTO transactions 
+    (email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
+    VALUES (%s,%s,%s,%s,%s,%s,%s)
+    """,(
+        sender_email,
+        receiver_account,
+        "Sent",
+        amount,
+        sender["name"],
+        sender["account_number"],
+        receiver["name"]
+))
 
     conn.commit()
 
@@ -319,7 +333,7 @@ def get_transactions():
     email = session["user_email"]
 
     cursor.execute("""
-    SELECT type, amount, receiver_account
+    SELECT type, amount, receiver_account, receiver_name
     FROM transactions
     WHERE email=%s
     ORDER BY id DESC
