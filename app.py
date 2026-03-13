@@ -105,19 +105,6 @@ def login():
         return jsonify({"success": False, "error": str(e)}), 500
     
 #=========forget password========
-'''@app.route("/forgot_password", methods=["POST"])
-def forgot_password():
-
-    data = request.json
-    email = data["email"]
-
-    cursor.execute("SELECT * FROM users WHERE email=%s",(email,))
-    user = cursor.fetchone()
-
-    if user:
-        return jsonify({"message":"Password Reset Request Has Been Sent To Your Email.✅"})
-    else:
-        return jsonify({"message":"Email not found ❌"})'''
     
 @app.route("/forgot_password", methods=["POST"])
 def forgot_password():
@@ -244,6 +231,13 @@ def transfer():
         return jsonify({"message": "Receiver account not found ❌"})
 
     receiver_email = receiver["email"]
+    
+    # ❌ Prevent self transfer
+    if receiver_email == sender_email:
+      return jsonify({
+        "success": False,
+        "message": "You cannot transfer money to your own account ❌"
+    })
 
     # Deduct sender balance
     cursor.execute("""
