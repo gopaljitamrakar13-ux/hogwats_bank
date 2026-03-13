@@ -176,6 +176,7 @@ function openLoginModal() {
   document.getElementById("loginEmail").value = "";
   document.getElementById("loginPassword").value = "";
   document.getElementById("loginPhone").value = "";
+  document.getElementById("loginSuccess").innerText = "";
 }
 
 function closeLoginModal() {
@@ -559,5 +560,6 @@ function checkLoginStatus() {
 
       document.querySelector("#balance p").innerText =
         "Your Current Balance: ₹" + data.balance;
+      document.getElementById("accountNumber").innerText = data.account_number;
     });
 }
