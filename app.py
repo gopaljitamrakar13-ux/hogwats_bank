@@ -142,20 +142,22 @@ def user_details():
         return jsonify({"message": "Please login first ❌"}), 401
 
     email = session["user_email"]
-
     cursor.execute("""
-        SELECT name, email, phone, balance, account_number
-        FROM users WHERE email=%s
+    SELECT name, email, phone, balance, account_number
+    FROM users
+    WHERE email=%s
     """, (email,))
+    user = cursor.fetchone()
+
     cursor.execute("""
     SELECT COALESCE(SUM(loan_amount),0) AS total_loan
     FROM loans
     WHERE email=%s
-    """,(email,))
-
+    """, (email,))
     loan = cursor.fetchone()
+
     user["loan_amount"] = loan["total_loan"]
-    user = cursor.fetchone()
+    
 
     if user:
         return jsonify(user)
@@ -255,12 +257,6 @@ def apply_loan():
         (email, account_number, loan_amount, transaction_id)
         VALUES (%s,%s,%s,%s)
         """,(email, account_number, amount, txn_id))
-        
-        cursor.execute("""
-        INSERT INTO transactions
-        (transaction_id,email,type,amount,receiver_name)
-        VALUES (%s,%s,%s,%s,%s)
-        """,(txn_id,email,"Loan",amount,"Bank Loan"))
 
         conn.commit()
 
