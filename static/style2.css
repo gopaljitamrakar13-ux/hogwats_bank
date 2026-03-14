@@ -499,3 +499,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   color: gray;
   font-size: 13px;
 }
+.tx-id {
+  color: gray;
+  font-size: 13px;
+}

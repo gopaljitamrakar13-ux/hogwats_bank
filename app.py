@@ -144,9 +144,17 @@ def user_details():
     email = session["user_email"]
 
     cursor.execute("""
-        SELECT name, email, phone, balance, loan_taken, loan_amount, account_number
+        SELECT name, email, phone, balance, account_number
         FROM users WHERE email=%s
     """, (email,))
+    cursor.execute("""
+    SELECT COALESCE(SUM(loan_amount),0) AS total_loan
+    FROM loans
+    WHERE email=%s
+    """,(email,))
+
+    loan = cursor.fetchone()
+    user["loan_amount"] = loan["total_loan"]
     user = cursor.fetchone()
 
     if user:
@@ -186,20 +194,73 @@ def apply_loan():
     data = request.json
     amount = int(data["amount"])
     email = session["user_email"]
+    cursor.execute(
+    "SELECT account_number FROM users WHERE email=%s",
+    (email,)
+)
+
+    user_account = cursor.fetchone()
+    account_number = user_account["account_number"]
+    txn_id = "TXN" + str(random.randint(100000000,999999999))
+    # Check if user already took loan today
+    cursor.execute("""
+    SELECT created_at FROM transactions
+    WHERE email=%s AND type='Loan'
+    AND DATE(created_at) = CURRENT_DATE
+    """, (email,))
+
+    loan_today = cursor.fetchone()
+
+    if loan_today:
+     return jsonify({"message": "You can only take one loan per day ❌"})
 
     if amount < 5000:
         return jsonify({"message": "❌ Minimum loan amount is ₹5,000"})
+    
+    #Prevent Loan Spam
+    cursor.execute(
+    "SELECT loan_taken FROM users WHERE email=%s",
+     (email,)
+    )
+
+    user = cursor.fetchone()
+
+    if user["loan_taken"]:
+     return jsonify({"message": "You already have an active loan ❌"})
 
     # ✅ Instant approval
     if amount <= 50000:
 
         cursor.execute("""
-            UPDATE users
-            SET loan_taken = TRUE,
-                loan_amount = %s,
-                balance = balance + %s
-            WHERE email = %s
-        """, (amount, amount, email))
+        UPDATE users
+        SET balance = balance + %s
+        WHERE email = %s
+        """, (amount, email))
+        
+        txn_id = "TXN" + str(random.randint(100000000,999999999))
+
+        cursor.execute("""
+        INSERT INTO transactions
+        (transaction_id, email, type, amount, receiver_name)
+        VALUES (%s,%s,%s,%s,%s)
+        """, (
+            txn_id,
+            email,
+            "Loan",
+            amount,
+            "Bank Loan"
+))      
+        cursor.execute("""
+        INSERT INTO loans
+        (email, account_number, loan_amount, transaction_id)
+        VALUES (%s,%s,%s,%s)
+        """,(email, account_number, amount, txn_id))
+        
+        cursor.execute("""
+        INSERT INTO transactions
+        (transaction_id,email,type,amount,receiver_name)
+        VALUES (%s,%s,%s,%s,%s)
+        """,(txn_id,email,"Loan",amount,"Bank Loan"))
 
         conn.commit()
 
@@ -231,6 +292,11 @@ def transfer():
     amount = int(data["amount"])
     receiver_account = data["receiver_account"]
     sender_email = session["user_email"]
+    if amount <= 0:
+     return jsonify({
+        "success": False,
+        "message": "Invalid transfer amount ❌"
+     })
 
     # Check sender balance
     cursor.execute("""
@@ -281,11 +347,13 @@ def transfer():
     """, (amount, receiver_account))
 
     # Store transaction 
+    txn_id = "TXN" + str(random.randint(100000000,999999999))
     cursor.execute("""
     INSERT INTO transactions 
-    (email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
-    VALUES (%s,%s,%s,%s,%s,%s,%s)
+    (transaction_id, email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
+    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
     """,(
+        txn_id,
         sender_email,
         receiver_account,
         "Sent",
@@ -293,20 +361,22 @@ def transfer():
         sender["name"],
         sender["account_number"],
         receiver["name"]
-))  
+    ))  
+    # Store receiver transaction
     # Store receiver transaction
     cursor.execute("""
     INSERT INTO transactions 
-    (email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
-    VALUES (%s,%s,%s,%s,%s,%s,%s)
-    """,(
-        receiver_email,
-        sender["account_number"],
-        "Received",
-        amount,
-        sender["name"],
-        sender["account_number"],
-        receiver["name"]
+    (transaction_id, email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
+    VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+""",(
+    txn_id,
+    receiver_email,
+    sender["account_number"],
+    "Received",
+    amount,
+    sender["name"],
+    sender["account_number"],
+    receiver["name"]
 ))
 
     conn.commit()
@@ -369,7 +439,7 @@ def get_transactions():
     email = session["user_email"]
 
     cursor.execute("""
-    SELECT type, amount, receiver_account, receiver_name,
+    SELECT transaction_id, type, amount, receiver_account, receiver_name,
     sender_name, sender_account, created_at
     FROM transactions
     WHERE email=%s

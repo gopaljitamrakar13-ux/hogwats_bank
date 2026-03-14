@@ -164,7 +164,7 @@ function validateLogin() {
         showSection("dashboard");
       } else {
         document.getElementById("loginPasswordError").innerText =
-          "Invalid Credentials ❌";
+          "Invalid Email / Password / Phone ❌";
       }
     });
 }
@@ -249,46 +249,12 @@ function loadBalance() {
         "Welcome " + data.name + " 👋";
 
       document.querySelector("#balance p").innerText =
-        "Your Current Balance: ₹" + data.balance;
+        "Your Current Balance: ₹" +
+        data.balance +
+        " | Loan Taken: ₹" +
+        data.loan_amount;
 
       document.getElementById("accountNumber").innerText = data.account_number;
-
-      // Load credit history
-      /* fetch("/credit_history")
-        .then((res) => res.json())
-        .then((credits) => {
-          let balanceSection = document.getElementById("balance");
-
-          // Reset balance section
-          balanceSection.innerHTML =
-            "<h3>Balance Check</h3><p>Your Current Balance: ₹" +
-            data.balance +
-            "</p>";
-
-          credits.forEach((tx) => {
-            let row = document.createElement("div");
-            row.className = "transaction-row";
-
-            let text = document.createElement("span");
-            text.innerText =
-              "Money credited ₹" +
-              tx.amount +
-              " from " +
-              tx.sender_name +
-              " (AC: " +
-              tx.sender_account +
-              ")";
-
-            let date = document.createElement("span");
-            date.className = "tx-date";
-            date.innerText = new Date(tx.created_at).toLocaleString();
-
-            row.appendChild(text);
-            row.appendChild(date);
-
-            balanceSection.appendChild(row);
-          });
-        });*/
     })
     .catch(() => {});
 }
@@ -365,6 +331,10 @@ function transferMoney() {
       } else {
         error.innerText = data.message;
         success.innerText = "";
+
+        setTimeout(() => {
+          error.innerText = "";
+        }, 3000);
       }
     });
 }
@@ -391,15 +361,21 @@ function loadTransactions() {
         date.className = "tx-date";
         date.innerText = new Date(tx.created_at).toLocaleString();
 
+        if (tx.type === "Loan") {
+          text.innerText =
+            "Loan credited ₹" + tx.amount + " | TXN: " + tx.transaction_id;
+
+          text.style.color = "blue";
+        }
+
         if (tx.type === "Received") {
           text.innerText =
             "Received ₹" +
             tx.amount +
             " from " +
             tx.sender_name +
-            " (AC: " +
-            tx.sender_account +
-            ")";
+            " | TXN: " +
+            tx.transaction_id;
           text.style.color = "green";
         } else {
           text.innerText =
@@ -407,9 +383,8 @@ function loadTransactions() {
             tx.amount +
             " → " +
             tx.receiver_name +
-            " (AC: " +
-            tx.receiver_account +
-            ")";
+            " | TXN: " +
+            tx.transaction_id;
           text.style.color = "red";
         }
 
