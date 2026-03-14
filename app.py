@@ -220,26 +220,16 @@ def apply_loan():
         return jsonify({"message": "❌ Minimum loan amount is ₹5,000"})
     
     #Prevent Loan Spam
-    cursor.execute(
-    "SELECT loan_taken FROM users WHERE email=%s",
-     (email,)
-    )
 
-    user = cursor.fetchone()
-
-    if user["loan_taken"]:
-     return jsonify({"message": "You already have an active loan ❌"})
 
     # ✅ Instant approval
     if amount <= 50000:
 
         cursor.execute("""
         UPDATE users
-        SET balance = balance + %s,
-        loan_taken = TRUE,
-        loan_amount = loan_amount + %s
+        SET balance = balance + %s
         WHERE email = %s
-        """, (amount, amount, email))
+        """, (amount, email))
         
         txn_id = "TXN" + str(random.randint(100000000,999999999))
 
