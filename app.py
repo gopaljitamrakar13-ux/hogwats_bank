@@ -235,9 +235,11 @@ def apply_loan():
 
         cursor.execute("""
         UPDATE users
-        SET balance = balance + %s
+        SET balance = balance + %s,
+        loan_taken = TRUE,
+        loan_amount = loan_amount + %s
         WHERE email = %s
-        """, (amount, email))
+        """, (amount, amount, email))
         
         txn_id = "TXN" + str(random.randint(100000000,999999999))
 
@@ -268,7 +270,7 @@ def apply_loan():
         cursor.execute("""
             UPDATE users
             SET loan_taken = TRUE,
-                loan_amount = %s
+            loan_amount = %s
             WHERE email = %s
         """, (amount, email))
 

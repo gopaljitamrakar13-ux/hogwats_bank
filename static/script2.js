@@ -276,8 +276,18 @@ function approveLoan() {
     body: JSON.stringify({ amount }),
   })
     .then((res) => res.json())
+    /* .then((data) => {
+      result.innerHTML = data.message;*/
     .then((data) => {
       result.innerHTML = data.message;
+
+      // clear loan input
+      document.getElementById("loanAmount").value = "";
+
+      // hide message after 3 seconds
+      setTimeout(() => {
+        result.innerHTML = "";
+      }, 3000);
 
       // ✅ Clear the input after loan apply
       document.getElementById("loanAmount").value = "";
@@ -363,19 +373,17 @@ function loadTransactions() {
 
         if (tx.type === "Loan") {
           text.innerText =
-            "Loan credited ₹" + tx.amount + " | TXN: " + tx.transaction_id;
-
+            "Loan credited ₹" + tx.amount + " | TXN_ID: " + tx.transaction_id;
           text.style.color = "blue";
-        }
-
-        if (tx.type === "Received") {
+        } else if (tx.type === "Received") {
           text.innerText =
             "Received ₹" +
             tx.amount +
             " from " +
             tx.sender_name +
-            " | TXN: " +
+            " | TXN_ID: " +
             tx.transaction_id;
+
           text.style.color = "green";
         } else {
           text.innerText =
@@ -383,8 +391,9 @@ function loadTransactions() {
             tx.amount +
             " → " +
             tx.receiver_name +
-            " | TXN: " +
+            " | TXN_ID: " +
             tx.transaction_id;
+
           text.style.color = "red";
         }
 
