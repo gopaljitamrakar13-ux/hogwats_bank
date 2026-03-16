@@ -622,7 +622,6 @@ function checkLoginStatus() {
 
 /*========feedback====*/
 function submitFeedback() {
-  let name = document.getElementById("feedbackName").value.trim();
   let rating = document.getElementById("feedbackRating").value;
   let message = document.getElementById("feedbackMessage").value.trim();
   let result = document.getElementById("feedbackResult");
@@ -638,7 +637,10 @@ function submitFeedback() {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ name, rating, message }),
+    body: JSON.stringify({
+      rating: rating,
+      message: message,
+    }),
   })
     .then((res) => res.json())
     .then((data) => {

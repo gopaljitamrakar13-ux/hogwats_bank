@@ -440,16 +440,15 @@ if __name__ == "__main__":
 #============feedback========
 @app.route("/submit_feedback", methods=["POST"])
 def submit_feedback():
-
     data = request.json
-    name = data["name"]
+    email = session["user_email"]
     rating = data["rating"]
     message = data["message"]
 
     cursor.execute("""
-    INSERT INTO feedback (name, rating, message)
+    INSERT INTO feedback (email, rating, message)
     VALUES (%s,%s,%s)
-    """,(name, rating, message))
+    """,(email, rating, message))
 
     conn.commit()
 

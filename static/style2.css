@@ -507,9 +507,10 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 /* FEEDBACK SECTION */
 
 .feedback-card {
-  max-width: 600px;
-  margin: auto;
-  text-align: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  text-align: left;
 }
 
 .feedback-sub {
