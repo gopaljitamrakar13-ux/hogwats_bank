@@ -20,16 +20,25 @@ body {
   width: 240px;
   background: #1e293b;
   color: white;
-  min-height: 100vh;
+  height: 100vh;
   padding: 20px;
   position: fixed;
-  transform: translateX(-100%);
-  transition: 0.3s;
   top: 0;
   left: 0;
+  transform: translateX(-100%);
+  transition: 0.3s;
   z-index: 1000;
 
-  overflow-y: auto; /* ADD THIS */
+  overflow-y: auto; /* enables vertical scrolling */
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 5px;
 }
 
 .sidebar.active {
