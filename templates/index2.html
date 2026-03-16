@@ -32,6 +32,7 @@
           <li onclick="showSection('transfer')">Money Transfer</li>
           <li onclick="showSection('transactions')">Transaction History</li>
           <li onclick="showSection('profile')">Profile Update</li>
+          <li onclick="showSection('feedback')">Feedback</li>
           <li onclick="showSection('chatbot')">Need Help?</li>
         </ul>
       </div>
@@ -171,6 +172,31 @@
 
           <button onclick="updateProfile()">Update</button>
           <p id="profileSuccess" class="success-msg"></p>
+        </div>
+
+        <div id="feedback" class="card hidden">
+          <h3>Give Your Feedback</h3>
+
+          <input type="text" id="feedbackName" placeholder="Your Name" />
+
+          <select id="feedbackRating">
+            <option value="">Rate Our Service</option>
+            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+            <option value="4">⭐⭐⭐⭐ Good</option>
+            <option value="3">⭐⭐⭐ Average</option>
+            <option value="2">⭐⭐ Poor</option>
+            <option value="1">⭐ Very Bad</option>
+          </select>
+
+          <textarea
+            id="feedbackMessage"
+            placeholder="Write your feedback..."
+            rows="4"
+          ></textarea>
+
+          <button onclick="submitFeedback()">Submit Feedback</button>
+
+          <p id="feedbackResult"></p>
         </div>
 
         <!-- CHAT -->

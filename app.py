@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify, session
 from flask_cors import CORS
 
+import uuid
+
 import random
 
 def generate_account_number():
@@ -59,10 +61,10 @@ def create_account():
         account_number = generate_account_number()
 
         cursor.execute("""
-            INSERT INTO users 
-            (name, email, password, phone, balance, loan_taken, loan_amount, account_number)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
-        """,(name,email,password,phone,50000,False,0,account_number))
+        INSERT INTO users 
+        (name, email, password, phone, balance, account_number)
+         VALUES (%s,%s,%s,%s,%s,%s)
+        """,(name,email,password,phone,50000,account_number))
 
         conn.commit()
 
@@ -203,7 +205,7 @@ def apply_loan():
 
     user_account = cursor.fetchone()
     account_number = user_account["account_number"]
-    txn_id = "TXN" + str(random.randint(100000000,999999999))
+    txn_id = "TXN" + str(uuid.uuid4().int)[:9]
     # Check if user already took loan today
     cursor.execute("""
     SELECT created_at FROM transactions
@@ -256,13 +258,6 @@ def apply_loan():
 
     # ⏳ Loan under review
     else:
-
-        cursor.execute("""
-            UPDATE users
-            SET loan_taken = TRUE,
-            loan_amount = %s
-            WHERE email = %s
-        """, (amount, email))
 
         conn.commit()
 
@@ -335,7 +330,7 @@ def transfer():
     """, (amount, receiver_account))
 
     # Store transaction 
-    txn_id = "TXN" + str(random.randint(100000000,999999999))
+    txn_id = "TXN" + str(uuid.uuid4().int)[:9]
     cursor.execute("""
     INSERT INTO transactions 
     (transaction_id, email, receiver_account, type, amount, sender_name, sender_account, receiver_name)
@@ -440,3 +435,22 @@ def get_transactions():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
+    
+#============feedback========
+@app.route("/submit_feedback", methods=["POST"])
+def submit_feedback():
+
+    data = request.json
+    name = data["name"]
+    rating = data["rating"]
+    message = data["message"]
+
+    cursor.execute("""
+    INSERT INTO feedback (name, rating, message)
+    VALUES (%s,%s,%s)
+    """,(name, rating, message))
+
+    conn.commit()
+
+    return jsonify({"message":"Thank you for your feedback ❤️"})

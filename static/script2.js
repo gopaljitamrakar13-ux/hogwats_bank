@@ -619,3 +619,33 @@ function checkLoginStatus() {
       document.getElementById("accountNumber").innerText = data.account_number;
     });
 }
+
+function submitFeedback() {
+  let name = document.getElementById("feedbackName").value.trim();
+  let rating = document.getElementById("feedbackRating").value;
+  let message = document.getElementById("feedbackMessage").value.trim();
+  let result = document.getElementById("feedbackResult");
+
+  if (!name || !rating || !message) {
+    result.innerText = "Please fill all fields ❌";
+    result.style.color = "red";
+    return;
+  }
+
+  fetch("/submit_feedback", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name, rating, message }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      result.innerText = data.message;
+      result.style.color = "green";
+
+      document.getElementById("feedbackName").value = "";
+      document.getElementById("feedbackRating").value = "";
+      document.getElementById("feedbackMessage").value = "";
+    });
+}
