@@ -620,6 +620,7 @@ function checkLoginStatus() {
     });
 }
 
+/*========feedback====*/
 function submitFeedback() {
   let name = document.getElementById("feedbackName").value.trim();
   let rating = document.getElementById("feedbackRating").value;
@@ -641,11 +642,25 @@ function submitFeedback() {
   })
     .then((res) => res.json())
     .then((data) => {
-      result.innerText = data.message;
+      result.innerHTML = "✅ Thank you for your feedback!";
       result.style.color = "green";
+
+      showPopup("Feedback submitted successfully ⭐");
 
       document.getElementById("feedbackName").value = "";
       document.getElementById("feedbackRating").value = "";
       document.getElementById("feedbackMessage").value = "";
+    });
+}
+
+function loadFeedbackStats() {
+  fetch("/feedback_stats")
+    .then((res) => res.json())
+    .then((data) => {
+      document.getElementById("avgRating").innerText = parseFloat(
+        data.avg_rating,
+      ).toFixed(1);
+
+      document.getElementById("totalFeedback").innerText = data.total_feedback;
     });
 }

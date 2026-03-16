@@ -453,4 +453,19 @@ def submit_feedback():
 
     conn.commit()
 
-    return jsonify({"message":"Thank you for your feedback ❤️"})
+    return jsonify({"message":"Thank you for your feedback "})
+
+#========feedback stats ==========
+@app.route("/feedback_stats")
+def feedback_stats():
+
+    cursor.execute("""
+    SELECT 
+    COUNT(*) AS total_feedback,
+    COALESCE(AVG(rating),0) AS avg_rating
+    FROM feedback
+    """)
+
+    stats = cursor.fetchone()
+
+    return jsonify(stats)
